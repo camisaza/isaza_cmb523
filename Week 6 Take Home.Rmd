@@ -1,7 +1,7 @@
 ---
 title: "Week 6: Benchmarking Notebook"
 output: html_notebook
-author: <YOUR NAME>
+author: <camila isaza>
 ---
 
 ## Testing out R Notebooks
