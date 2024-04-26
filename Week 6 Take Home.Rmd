@@ -1,7 +1,7 @@
 ---
 title: "Week 6: Benchmarking Notebook"
 output: html_notebook
-author: <camila isaza>
+author: <camila isaa>
 ---
 
 ## Testing out R Notebooks
@@ -34,13 +34,13 @@ set.seed(66)
 Great. We are going to start to examine how different ways of doing the same task can take different amounts of time to perform. 
 
 ```{r}
-n= #pick a large number for N, around one-hundred million or so
+n= 100030400 #pick a large number for N, around one-hundred million or so
 res = runif(n) + 1
 ```
 
 QUESTION 1: What does the above code do?
 
-ANSWER 1: <YOUR ANSWER HERE>
+ANSWER 1: the code above is generating a random number and storing it
 
 
 We are going to find the sum of all the logs of the number in our vector below. 
@@ -48,12 +48,27 @@ The code to compute the sum already works, so you don't need to touch it. Instea
 
 ```{r}
 #write code that runs this code 3 times using a loop, saves the amount of time it took to run each time, then prints the average
+ numberofruns <- 3
+runtimes <- numeric(numberofruns)
+for (run in 1:numberofruns) {
+  start_time <- Sys.time() 
+
 log_sum<- 0
-for (i in 1:length(res)){
+for (i in 1:length(res)) 
   log_sum <- log_sum + log(res[i])
 }
+ 
+end_time <- Sys.time ()
+runtimes[run] <- end_time - start_time
+print(paste("Run", run, "completed in", runtimes[run], "seconds.\n"))
+
+
 #print the average of three runs
+average_runtime <- mean(runtimes)
+print(paste("average runtime", average_runtime, "seconds\n"))
+
 ```
+
 
 The above code uses a loop and looks at each element (i.e., number) in the vector "res", takes the log of that number, adds it to the current sum (log_sum), and stores the result as the new log_sum.
 
@@ -61,13 +76,33 @@ QUESTION 2:
 What is "i" in the above code? What does it do? What value does it take on the first iteration of the loop? The second? The thirty-third?
 
 ANSWER 2:
-
+i is a variable in a loop. it 
 
 Below is code that does achieves the same result as above, but in a different way. Again, insert code that runs the code 3 times, saving the amount of time it takes to run for each, and then printing the average. This code can be/should be identical or pretty much identical to what you wrote above. 
 
 ```{r}
 #write code that runs this code 3 times using a loop, saves the amount of time it took to run each time, then prints the average
-log_sum <- sum(log(res))
+# Initialize variables
+numberofruns <- 3
+runtimes <- numeric(numberofruns)
+
+# Loop to run the code three times
+for (run in 1:numberofruns) {
+  start_time <- Sys.time() 
+
+  # Your code here
+  log_sum <- sum(log(res))
+
+  end_time <- Sys.time()
+  runtimes[run] <- end_time - start_time
+  
+  print(paste("Run", run, "completed in", runtimes[run], "seconds."))
+}
+
+# Print the average of three runs
+average_runtime <- mean(runtimes)
+print(paste("Average runtime:", average_runtime, "seconds"))
+
 
 #print the average of the three runs here
 ```
@@ -114,10 +149,17 @@ for(i in 1:nrow(sequencing_matrix)){
 }
 #and end here.
 #print how long it took to run!
-
+{
 print("After replacement...")
 print(sequencing_matrix[1:6,1:6]) #did it work?
-
+ end_time <- Sys.time()
+  runtimes[run] <- end_time - start_time
+  
+  print(paste("Run", run, "completed in", runtimes[run], "seconds."))
+}
+print(paste("Average runtime:", average_runtime, "seconds"))
+print("After replacement...")
+print(sequencing_matrix[1:6,1:6]) #did it work?
 ```
 
 The above code used what is called nested loops. It basically works by looking at the data frame and saying "for each row and each column, find the value that is in that row-column cell. Check to see if it is a lower-case "a" and, if so, replace it with an "A"."
@@ -128,8 +170,7 @@ It is simple code to write, but isn't the most efficient.
 
 QUESTION 3: What do i and j represent in the loops above, respectively? 
 
-<YOUR ANSWER HERE>
-
+i represents the row index, and j represents the column index of each element in the matrix.
 
 The code below actually still uses nested loops, but rather than call nrow and ncol within the loop, we call them outside of the loop and store the result.
 
@@ -147,6 +188,10 @@ for(i in nrows){
     if(sequencing_matrix[i,j]=="a"){sequencing_matrix[i,j]<-"A"}
   }
 }
+ end_time <- Sys.time()
+  runtimes[run] <- end_time - start_time
+  
+  print(paste("Run", run, "completed in", runtimes[run], "seconds."))
 #and ends here.
 #print how long it took to run.
 
@@ -156,7 +201,7 @@ The code above should be faster than our first attempt.
 
 QUESTION 4: Since the above code is faster and the only change we made was storing the result of nrow and ncol, rather than calling them in the loop declaration, what does that imply about the number of times the nrow and ncol functions were being called in our first version.
 
-<YOUR ANSWER HERE>
+when it ran the second time it knew what it was doing so it went faster.
 
 
 Alright! Maybe you don't know how to vectorize the whole thing, but remember you can work with whole rows at once and replace the whole row. That is, rather than looking at each cell one-by-one, you could instead look at the whole row at once and replace them all at once. 
@@ -175,13 +220,15 @@ for(i in nrows){
 }
 #and ends here
 #print how long it took!
-
+ end_time <- Sys.time()
+  runtimes[run] <- end_time - start_time
+  
+  print(paste("Run", run, "completed in", runtimes[run], "seconds."))
 ```
 
 QUESTION 5: How many times does the loop above execute? 
 
-<YOUR ANSWER HERE>
-
+one time
 
 Sometimes, though, the devil is in the details. Below is a solution that is entirely vectorized (e.g., uses no loops).
 
@@ -194,6 +241,10 @@ rownames(sequencing_matrix)<-paste0("Sample",1:nrow(sequencing_matrix))
 #your benchmarking code starts here
 sequencing_matrix<-as.data.frame(lapply(sequencing_matrix, function(x) {gsub("a ", "A", x)}))
 #and ends here
+ end_time <- Sys.time()
+  runtimes[run] <- end_time - start_time
+  
+  print(paste("Run", run, "completed in", runtimes[run], "seconds."))
 #print how long it took!
 ```
 
@@ -201,8 +252,9 @@ Depending on some details we don't have time to get into today, Method 4 may be 
 
 
 QUESTION 6: Which of the methods (1-4) to replace all the lower-case As with upper case A ran fastest? How many times faster was the fastest method than the slowest method?
+the quickest method was method 2 and the slowest was method 4
 
-<WRITE YOUR ANSWER HERE>
+method 2 was the fastest and method 4 was the slowest by 2 times
 
 
 ## Writing code to solve a problem
@@ -223,7 +275,9 @@ TASK: Below, write code that prints the total number of "T"s in the sequencing_m
 
 ```{r}
 #Your code here
-
+sequencing_matrix <- as.data.frame(matrix(sample(x = c("a","C","T","G"),size = 2200000,replace = T), nrow=1000))
+numberof_T <- sum(sequencing_matrix=="T")
+print(numberof_T)
 ```
 
 
